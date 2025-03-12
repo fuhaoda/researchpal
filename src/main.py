@@ -36,13 +36,16 @@ async def main():
     choice = input("Enter choice (1 or 2): ").strip()
 
     if choice == "1":
-        user_initial_query = input("Enter your research question: ").strip()
-        print("DrBombe may need you to provide up to 5 follow-up clarifications... Here are the questions ...")
+        print("Enter your research question (Press Enter + Ctrl+D or Ctrl+Z to finish):")
+        user_initial_query = sys.stdin.read().strip()
+        print("\n=========\n"+"DrBombe may need you to provide up to 5 follow-up clarifications... Here are the questions ...\n")
         user_initial_query_messages = [{"role": "user", "content": user_initial_query}]
         
         followup_questions = await followups(user_initial_query_messages)
         print(followup_questions)
-        user_followup_answers = input("Enter your follow-up answers: ").strip()
+
+        print("\n Enter your follow-up answers (Press Enter + Ctrl+D or Ctrl+Z to finish): \n")
+        user_followup_answers = sys.stdin.read().strip() 
         
         messages = [{"role": "assistant", "content": "What's your research question?"},
                     {"role": "user", "content": user_initial_query}, 
@@ -86,8 +89,8 @@ async def main():
     #     print(f"Supporting evidence report saved to {output_filename}\n")
     #     print(final_report)
         
-    # else:
-    #     print("Invalid choice. Exiting.")
+    else:
+        print("Invalid choice. Exiting.")
 
 if __name__ == "__main__":
     asyncio.run(main())
