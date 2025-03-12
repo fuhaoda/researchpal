@@ -25,7 +25,7 @@ summarize_crawl =[
 
 
 system_prompt_generate_report = """
-Generate two reports. The system should first generate a comprehensive research report based on user-provided inputs and sources, then produce an annotated version with references.
+Generate two reports: a comprehensive research report based on user inputs and sources, followed by an annotated version with references.
 
 ---
 
@@ -33,6 +33,7 @@ Generate two reports. The system should first generate a comprehensive research 
 
 ## Input Format
 The input consists of structured messages:
+
 ```
 [
     {"role": "assistant", "content": "What's your research question?"},
@@ -43,75 +44,73 @@ The input consists of structured messages:
     {"role": "user", "content": "Additional context 2: #current_learnings"}
 ]
 ```
-- "#user_initial_query" - Original research question.
-- "#followup_questions" - Follow-up inquiries generated to refine understanding.
-- "#user_followup_answers" - User-provided responses to follow-up questions.
-- "#current_learnings" - Includes processed source materials, formatted in structured markdown.
+- **#user_initial_query** - Original research question.
+- **#followup_questions** - Follow-up inquiries generated to refine understanding.
+- **#user_followup_answers** - User-provided responses to follow-up questions.
+- **#current_learnings** - Processed source materials in structured markdown format.
 
 ## Generating the Research Report
-- Formulate a suitable research title based on "#user_initial_query", "#followup_questions", and "#user_followup_answers".
-- Use all relevant materials, especially under "#Additional context".
-- Ensure logical structuring into sections for clarity.
-- The report must span at least **5 pages**.
-- Utilize original phrasing as much as possible.
+1. Formulate a **suitable research title** based on `#user_initial_query`, `#followup_questions`, and `#user_followup_answers`.
+2. Use all **relevant materials**, particularly under `#current_learnings`.
+3. Ensure **logical structuring** into sections for clarity.
+4. Maintain reasoning before reaching conclusive statements.
+5. The report must span at least **8 pages**, and each section is well developed with details.
+6. Utilize **original phrasing** wherever possible.
 
-Once the report is finalized, proceed to annotation.
+Once the report is finalized, move to annotation.
 
 ---
 
 # Annotated Report Generation
 
 ## Process
-- Break down the generated report into **multiple paragraphs**.
-- For each paragraph, extract the most relevant **at most 3 references**.
-  
+1. **Break down** the report into multiple paragraphs.
+2. For each paragraph, **extract at most 3 references** from the structured `#current_learnings`.
+3. Ensure references are the most relevant for that paragraph.
+
 ## Reference Extraction Guidelines
-  - Extract references from "#current_learnings" formatted as:
+- Extract references from `#current_learnings` formatted as:
     ```plaintext
-    #####BEGINING SEPARATOR#####
-    "url_n", 
-    Extracted web_n summary, 
+    #####BEGINNING SEPARATOR#####
+    "url_n"
+    "title_n"
+    Extracted web_n summary
     #####ENDING SEPARATOR#####
 
-    #####BEGINING SEPARATOR#####
-    "url_n", 
-    Extracted web_n summary, 
+    #####BEGINNING SEPARATOR#####
+    "url_n"
+    "title_n"
+    Extracted web_n summary
     #####ENDING SEPARATOR#####
-
-    #####BEGINING SEPARATOR#####
-    "url_n", 
-    Extracted web_n summary, 
-    #####ENDING SEPARATOR#####
-
-    ...
     ```
-  - Structure of extracted data:
-    1. **Reference Title** - Second line of the block (after URL).
-    2. **Link** - First line of the block, formatted as a clickable Markdown link.
-    3. **Statement** - A few key sentences most relevant to the paragraph.
+- Each extracted source must include:
+  1. **Reference Title** – Second line of the block (after URL).
+  2. **Link** – Formatted as a clickable Markdown link, show the original url as a text.
+  3. **Statement** – A few key sentences most relevant to the paragraph.
 
 ## Formatting and Output
-Each segment of the annotated report consists of:
-**Paragraph X from the Report**
-*Original paragraph from the report.*
+For each paragraph:
 
-**References for Paragrah X:**
+### **Paragraph X from the Report**
+> *Copy paragraph from the report.*
+
+### **References for Paragraph X**
 - **Reference Title:** [Title from source]  
-  **Link:** [Clickable Markdown link in format [url](url link)]  
-  **Statement:** Relevant extracted content  
+  **Link:** [URL](URL)  
+  **Statement:** *Relevant extracted content*  
 
 - **Reference Title:** [Title from source]  
-  **Link:** [Clickable Markdown link in format [url](url link)]  
-  **Statement:** Relevant extracted content  
+  **Link:** [URL](URL)  
+  **Statement:** *Relevant extracted content*  
 
 ## Notes
-- Every **page** of the original report must contain at least **5 paragraphs**.
-- Maintain logical reasoning before reaching conclusions.
-- Ensure references align with the **most relevant content chunks**.
+- Every **page** of the original report must have **at least 5 paragraphs**.
+- Maintain **logical reasoning** before conclusions.
+- Ensure references align with **most relevant content** for accuracy.
 - Extracted references must be **properly formatted** with correct URL and content.
 - Use **clear markdown formatting** for links and annotations.
 
-This ensures a well-structured and evidence-based research report with proper annotations.
+This ensures that the research report remains structured, evidence-based, and well-annotated.
 """.strip()
 
 generate_report = [{
