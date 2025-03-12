@@ -14,7 +14,7 @@ from src.crawler import crawl_urls
 from src.extract_learnings import extract_learnings
 
 
-async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visited_urls=None):
+async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visited_urls=None,urls_summaries=None):
     """
     Recursively conduct research.
     1. Generate follow-up questions (if not provided).
@@ -37,7 +37,8 @@ async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visite
     """
     if visited_urls is None:
         visited_urls = set()
-        
+    if urls_summaries is None:
+        urls_summaries = []
     if progress:
         progress.update(f"Conducting research at depth {depth}...")
 
@@ -59,7 +60,11 @@ async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visite
 
     # Crawl the new URLs.
     crawl_results = await crawl_urls(unique_urls)
-    
+    # Extend the urls_summaries with each successful crawl's result.
+    urls_summaries.extend(
+       {"url": result["url"], "summary": result["summary"]}
+       for result in crawl_results if result.get("success")
+   )
     # Extract learnings.
     current_learnings = await extract_learnings(crawl_results)
 
@@ -68,10 +73,11 @@ async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visite
     
     # Recursive exploration.
     if depth > 1:
-        await conduct_research(messages=messages, depth=depth-1, progress=progress, visited_urls=visited_urls)
+        await conduct_research(messages=messages, depth=depth-1, progress=progress, visited_urls=visited_urls, urls_summaries=urls_summaries)
 
     return {"messages": messages,
-            "visited_urls": list(visited_urls)}
+            "visited_urls": list(visited_urls),
+            "urls_summaries": urls_summaries}
 
 # async def find_supporting_evidence(input_text, progress=None):
 #     """

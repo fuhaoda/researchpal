@@ -2,28 +2,56 @@ from src.config import MAX_FOLLOWUP_QUESTION, MAX_SERP
 
 generate_followup = [{
     "role": "system",
-    "content": f"Given the following query from the user, ask some follow up questions to clarify the research direction. Return a maximum of {MAX_FOLLOWUP_QUESTION} questions, but feel free to return less if the original query is clear"
+    "content": f"Given the following query from the user, ask some follow up questions to clarify the research direction. Return a maximum of {MAX_FOLLOWUP_QUESTION} questions with a purpose to generate a research report for the topic, but feel free to return less if the original query is clear"
 }]
+
 
 generate_serp = [{
     "role": "system",
     "content": (
-        f"Given the following conversation between assistant and user, generate a list of high quality SERP queries to fit into a search engine, like Google, to research the topic."
+        f"Given the following conversation between assistant and user, generate a list of high quality SERP queries. These queries should be designed for effective research using a search engine like Google."
         f"Return a maximum of {MAX_SERP} queries, but feel free to return fewer if the original prompt is clear. "
+        "Prioritize sources of high-quality information, such as Published papers in top academic journals.\n"
         "Make sure each query is unique and not similar to the others.\n"
-        "Each query should be on a separate line.\n"
-        "Please only output SERP queries and nothing else, so that we can parse them later."
+        "Each query should exist on its own line to ensure easy parsing.\n"
+        "Output only the SERP queries, without any additional text."
     )
 }]
+
+
+### Summarize Crawl ###
+system_prompt_summarize_crawl = """
+Given the following input scraped results from the web, summarize the content in no more than one page using Markdown format. Use the original sentences as much as possible.
+
+The summary should follow this structure:
+
+1. Start with the title of the page as the first line.
+2. Provide an executive summary in no more than 3 sentences.
+3. Follow with a detailed summary with the length about one page.
+
+# Output Format
+
+The output should be formatted as follows:
+
+# [Title]
+**Executive Summary**  
+[No more than 3 sentences summarizing the key points. Use simple language, avoiding jargon.]
+
+**Detailed Summary**  
+[More in-depth summary of the content with the length less or equal to one page.]
+
+Ensure the summary remains concise while preserving the original meaning.
+""".strip()
 
 summarize_crawl =[
     {
         "role": "system",
-        "content": "Given the following input scrapped results from the web, summarize the content no more than one page in markdown text format. Use the original sentences as much as possible. The first line of the summary always start as the title of the page."
+        "content": system_prompt_summarize_crawl
     }
 ]
 
 
+### Generate Report ###
 system_prompt_generate_report = """
 Generate two reports: a comprehensive research report based on user inputs and sources, followed by an annotated version with references.
 

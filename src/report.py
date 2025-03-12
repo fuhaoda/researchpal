@@ -22,11 +22,15 @@ async def generate_base_report(research_results=None):
     """
     messages = generate_report + research_results.get("messages", [])
     urls = research_results.get("visited_urls", [])
-
+    urls_summaries = research_results.get("urls_summaries", [])
 
     report = await get_ai_responses(messages= messages, model= ModelType.SUMMARIZING)
 
-    report += "\n\n" + "##All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n"
-
+    report += "\n\n" + "## All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n"
+    report += "\n\n" + "\n---\n" + "\n" + "# Appendix: Summary of Key Learnings \n\n"
+    for url_summary in urls_summaries:
+         url = url_summary['url']
+         summary = url_summary['summary']
+         report += "\n---\n" + "\n---\n" + f"\n [{url}]({url})\n\n{summary}" + "\n\n"
     return report
 

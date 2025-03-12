@@ -4,7 +4,7 @@ For each URL, crawls and extracts markdown content.
 """
 
 import asyncio
-from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
+from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode, DefaultMarkdownGenerator, PruningContentFilter
 from src.ai import get_ai_responses
 from src.prompts import summarize_crawl
 from src.utils import ModelType
@@ -18,7 +18,20 @@ async def crawl_url(url):
     Returns:
        dict: A dictionary with keys 'url', 'success', and 'markdown'.
     """
-    crawler_config = CrawlerRunConfig(cache_mode=CacheMode.BYPASS)
+    crawler_config = CrawlerRunConfig(
+    cache_mode=CacheMode.BYPASS,
+    
+    markdown_generator=DefaultMarkdownGenerator(
+        content_filter=PruningContentFilter(
+            threshold=0.35,  # Less aggressive filtering (was 0.5)
+            threshold_type="fixed",  # Use a fixed threshold to keep more content
+            min_word_threshold=20  # Retain more short sections
+        )
+    ),
+    
+    exclude_external_links=False,  # Allow external references for research
+    exclude_social_media_links=True,  # Still remove distracting social links
+    )
     try:
         async with AsyncWebCrawler() as crawler:
             result = await crawler.arun(url, config=crawler_config)
