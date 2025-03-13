@@ -75,9 +75,9 @@ async def main():
         print("Enter the text for which you want to find supporting evidence (Press Enter + Ctrl+D or Ctrl+Z to finish):")
         user_statement = sys.stdin.read().strip()
 
-        progress.update("Step 1: Splitting the user statement into blocks of three sentences...")
+        
         splitted_statement = split_into_three_sentences(user_statement)
-        progress.update("Step 1 complete: Statement successfully split.")
+        progress.update("Step 1 complete: Statement successfully split into blocks of three sentences.")
 
         progress.update("Step 2: Generating SERP queries and retrieving URLs for each block...")
         ref_urls_from_splitted_statement = await blocks_to_urls(splitted_statement)

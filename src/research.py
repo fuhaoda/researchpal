@@ -12,7 +12,7 @@ from src.config import RESEARCH_DEPTH, MAX_REFERENCE_PER_PARAGRAPH
 from src.serp import generate_serp_queries, search_serp
 from src.crawler import crawl_urls
 from src.extract_learnings import extract_learnings
-
+from src.prompts import generate_serp_research
 
 async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visited_urls=None,urls_summaries=None):
     """
@@ -42,8 +42,8 @@ async def conduct_research(messages, depth=RESEARCH_DEPTH, progress=None, visite
     if progress:
         progress.update(f"Conducting research at depth {depth}...")
 
-    # Generate SERP queries via OpenAI (simulation).
-    serp_queries = await generate_serp_queries(messages)
+    
+    serp_queries = await generate_serp_queries(generate_serp_research+messages)
 
     # Gather new URLs from search results, skipping already visited ones.
     new_urls = set()

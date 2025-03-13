@@ -1,13 +1,15 @@
 # Import the required functions from the serp module and the asyncio library for asynchronous processing.
 from src.serp import generate_serp_queries, search_serp
+from src.prompts import generate_serp_evidence
 import asyncio
 
 # Asynchronously processes a single block of text.
 # This function generates SERP queries for the block, executes search tasks concurrently,
 # and returns a deduplicated list of URLs obtained from the search results.
 async def process_block(block):
+
     # Prepare a message payload based on the text block.
-    messages = [{"role": "user", "content": block}]
+    messages = generate_serp_evidence+[{"role": "user", "content": block}]
     # Generate search queries using the SERP module.
     queries = await generate_serp_queries(messages)
     # Create asynchronous search tasks for each query.

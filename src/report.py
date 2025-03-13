@@ -6,7 +6,7 @@ append reference blocks for each report chunk.
 
 from src.ai import get_ai_responses
 from src.utils import ModelType
-from src.prompts import generate_report
+from src.prompts import generate_report_research
 
 async def generate_base_report(research_results=None):
     """
@@ -20,7 +20,7 @@ async def generate_base_report(research_results=None):
     Returns:
        str: A markdown-formatted report.
     """
-    messages = generate_report + research_results.get("messages", [])
+    messages = generate_report_research + research_results.get("messages", [])
     urls = research_results.get("visited_urls", [])
     urls_summaries = research_results.get("urls_summaries", [])
 
