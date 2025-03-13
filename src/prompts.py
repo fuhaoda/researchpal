@@ -146,3 +146,12 @@ generate_report = [{
     "content": system_prompt_generate_report
 }]
 
+
+### Find Supporting Evidence ###
+find_evidence = [{
+    "role": "system",
+    "content": (
+        f"Given the following user input, find supporting evidence for the statement. "
+        f"Generate a markdown report with the original statement and supporting evidence."
+    )
+}]

@@ -34,3 +34,31 @@ async def generate_base_report(research_results=None):
          report += "\n---\n" + "\n---\n" + f"\n [{url}]({url})\n\n{summary}" + "\n\n"
     return report
 
+async def generate_evidence_report(blocks_with_references, supporting_evidence):
+    report = "# Final Evidence Report\n\n"
+    # Iterate over each block along with its corresponding supporting evidence
+    for idx, block in enumerate(blocks_with_references):
+        # Retrieve the statement from the block (fallback if missing)
+        statement = block.get("statement", "No statement provided.")
+        # Get supporting evidence for the block; if not available, display a fallback message.
+        evidence = supporting_evidence[idx].strip() if idx < len(supporting_evidence) else "No supporting evidence available."
+        
+        report += f"## Statement {idx + 1}\n\n"
+        report += f"**Statement:**\n\n{statement}\n\n"
+        report += f"**Supporting Evidence:**\n\n{evidence}\n\n"
+        report += "\n---\n\n"
+    
+    # Collect all unique reference URLs from each block's references.
+    all_refs = set()
+    for block in blocks_with_references:
+        for ref in block.get("references", []):
+            url = ref.get("url")
+            if url:
+                all_refs.add(url)
+    
+    if all_refs:
+        report += "## All Reference Links\n\n"
+        for url in sorted(all_refs):
+            report += f"- [{url}]({url})\n"
+    
+    return report

@@ -15,9 +15,14 @@ import asyncio
 
 from src.config import RESEARCH_DEPTH
 from src.research import conduct_research
-from src.report import generate_base_report
+from src.report import generate_base_report, generate_evidence_report
 from src.progress import ProgressManager
 from src.followups import followups
+from src.utils import split_into_three_sentences, unique_urls
+from src.blocks_to_urls import blocks_to_urls
+from src.crawler import crawl_urls
+from src.blocks_to_references import blocks_to_references
+from src.find_supporting_evidence import find_supporting_evidence
 
 def get_short_description(text, max_words=3):
     """
@@ -66,28 +71,49 @@ async def main():
         print(f"Final report saved to {output_filename}\n")
         
         
-    elif choice == "2":
-        print("coming soon!")
-    #     print("Enter the text for which you want to find supporting evidence:")
-    #     input_text = input().strip()
-    #     progress.update("Processing supporting evidence...")
-    #     evidence = await find_supporting_evidence(input_text, progress=progress)
-    #     final_report = ""
-    #     chunks = input_text.split("\n\n")
-    #     for chunk in chunks:
-    #         final_report += chunk + "\n\n"
-    #         refs = evidence.get(chunk, [])
-    #         for ref in refs:
-    #             final_report += f"Reference Title: {ref['reference_title']}\n"
-    #             final_report += f"Link: {ref['link']}\n"
-    #             final_report += f"Statement: {ref['statement']}\n\n"
-    #     short_desc = get_short_description(input_text)
-    #     output_filename = os.path.join("output", f"supporting_evidence_{short_desc}.md")
-    #     os.makedirs("output", exist_ok=True)
-    #     with open(output_filename, "w", encoding="utf-8") as f:
-    #         f.write(final_report)
-    #     print(f"Supporting evidence report saved to {output_filename}\n")
-    #     print(final_report)
+    elif choice == "2": #"2. Find supporting evidence"
+        print("Enter the text for which you want to find supporting evidence (Press Enter + Ctrl+D or Ctrl+Z to finish):")
+        user_statement = sys.stdin.read().strip()
+
+        progress.update("Step 1: Splitting the user statement into blocks of three sentences...")
+        splitted_statement = split_into_three_sentences(user_statement)
+        progress.update("Step 1 complete: Statement successfully split.")
+
+        progress.update("Step 2: Generating SERP queries and retrieving URLs for each block...")
+        ref_urls_from_splitted_statement = await blocks_to_urls(splitted_statement)
+        progress.update("Step 2 complete: URLs retrieved for each block.")
+
+        progress.update("Step 3: Crawling unique URLs from all blocks...")
+        all_references = await crawl_urls(unique_urls(ref_urls_from_splitted_statement))
+        progress.update("Step 3 complete: Unique URL crawling finished.")
+
+        progress.update("Step 4: Organizing references by statement...")
+        splitted_statement_with_references = await blocks_to_references(
+            blocks=splitted_statement,
+            urls=ref_urls_from_splitted_statement,
+            references=all_references
+        )
+        progress.update("Step 4 complete: References organized by statement.")
+       
+        # Step 5: Generate Markdown summaries for each splitted statement.
+        progress.update("Step 5: Generating Markdown summaries for each splitted statement...")
+        supporting_evidence = await find_supporting_evidence(splitted_statement_with_references)
+        progress.update("Step 5 complete: Generated Markdown summaries for splitted statement.")
+        
+        # Step 6: Generate the final report by compiling all markdown sections.
+        progress.update("Step 6: Compiling all markdown sections into the final evidence report...")
+        final_report = await generate_evidence_report(blocks_with_references=splitted_statement_with_references, supporting_evidence=supporting_evidence)
+        progress.update("Step 6 complete: Final evidence report generated.")
+        
+        # Save the final report.
+        short_desc = get_short_description(user_statement)
+        output_filename = os.path.join("output", f"supporting_evidence_{short_desc}.md")
+        os.makedirs("output", exist_ok=True)
+        with open(output_filename, "w", encoding="utf-8") as f:
+            f.write(final_report)
+        progress.update(f"Report saved to {output_filename}")
+        print(f"Supporting evidence report saved to {output_filename}\n")
+ 
         
     else:
         print("Invalid choice. Exiting.")
