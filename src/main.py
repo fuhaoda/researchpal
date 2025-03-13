@@ -18,18 +18,26 @@ from src.research import conduct_research
 from src.report import generate_base_report, generate_evidence_report
 from src.progress import ProgressManager
 from src.followups import followups
-from src.utils import split_into_three_sentences, unique_urls
+from src.utils import split_into_three_sentences, unique_urls, ModelType
 from src.blocks_to_urls import blocks_to_urls
 from src.crawler import crawl_urls
 from src.blocks_to_references import blocks_to_references
 from src.find_supporting_evidence import find_supporting_evidence
+from src.ai import get_ai_responses
 
-def get_short_description(text, max_words=3):
+async def get_short_description(text, max_words=3):
     """
     Generate a short description from the first few words of the given text.
     """
-    words = text.split()
-    return "_".join(words[:max_words]).lower() if words else "research"
+    message = [{"role":"system", "content": "find 3 words to summariz user input so that I can put in a file name."},{"role": "user", "content": text}]
+    short_title = await get_ai_responses(messages=message, model=ModelType.SUMMARIZING)
+    from datetime import datetime
+    processed_title = short_title.strip().replace(" ", "_").lower()
+    now = datetime.now()
+    dt_string = now.strftime("%Y%m%d_%H%M")
+    final_short_description = f"{processed_title}_{dt_string}"
+    return final_short_description
+    
 
 
 async def main():
@@ -64,7 +72,7 @@ async def main():
         base_report = await generate_base_report(research_results=research_results)
         
         short_desc = get_short_description(user_initial_query)
-        output_filename = os.path.join("output", f"research_result_{short_desc}.md")
+        output_filename = os.path.join("output", f"research_{short_desc}.md")
         os.makedirs("output", exist_ok=True)
         with open(output_filename, "w", encoding="utf-8") as f:
             f.write(base_report)
@@ -107,7 +115,7 @@ async def main():
         
         # Save the final report.
         short_desc = get_short_description(user_statement)
-        output_filename = os.path.join("output", f"supporting_evidence_{short_desc}.md")
+        output_filename = os.path.join("output", f"evidence_{short_desc}.md")
         os.makedirs("output", exist_ok=True)
         with open(output_filename, "w", encoding="utf-8") as f:
             f.write(final_report)
