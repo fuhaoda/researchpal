@@ -25,7 +25,7 @@ from src.blocks_to_references import blocks_to_references
 from src.find_supporting_evidence import find_supporting_evidence
 from src.ai import get_ai_responses
 
-async def get_short_description(text, max_words=3):
+async def get_short_description(text):
     """
     Generate a short description from the first few words of the given text.
     """
@@ -38,8 +38,6 @@ async def get_short_description(text, max_words=3):
     final_short_description = f"{processed_title}_{dt_string}"
     return final_short_description
     
-
-
 async def main():
     progress = ProgressManager()
     print("Welcome to My ResearchPal!")
@@ -68,10 +66,10 @@ async def main():
         
         research_results = await conduct_research(messages=messages, depth=RESEARCH_DEPTH, progress=progress)
         
-        progress.update("Generating base report...")
+        progress.update("Generating research report...")
         base_report = await generate_base_report(research_results=research_results)
         
-        short_desc = get_short_description(user_initial_query)
+        short_desc = await get_short_description(user_initial_query)
         output_filename = os.path.join("output", f"research_{short_desc}.md")
         os.makedirs("output", exist_ok=True)
         with open(output_filename, "w", encoding="utf-8") as f:
@@ -114,7 +112,7 @@ async def main():
         progress.update("Step 6 complete: Final evidence report generated.")
         
         # Save the final report.
-        short_desc = get_short_description(user_statement)
+        short_desc = await get_short_description(user_statement)
         output_filename = os.path.join("output", f"evidence_{short_desc}.md")
         os.makedirs("output", exist_ok=True)
         with open(output_filename, "w", encoding="utf-8") as f:
@@ -122,7 +120,6 @@ async def main():
         progress.update(f"Report saved to {output_filename}")
         print(f"Supporting evidence report saved to {output_filename}\n")
  
-        
     else:
         print("Invalid choice. Exiting.")
 

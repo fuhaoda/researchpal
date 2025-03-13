@@ -97,7 +97,7 @@ Research scope is guided by structured dialogue inputs:
 
 ### 1. Establish Clear Research Foundation  
 - **Title**: Concise title reflecting combined insights from user queries and dialogue.  
-- **Introduction** (minimum 400 words): Clearly present research context, objectives, significance, and research questions or hypotheses.  
+- **Introduction** (~300 words): Clearly present research context, objectives, significance, and research questions or hypotheses.  
 
 ### 2. Integration of Source Materials  
 - Utilize **all additional context**, incorporating **critical analysis**, key facts, and summaries.  
