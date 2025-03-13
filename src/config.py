@@ -5,8 +5,8 @@ Configuration constants for My ResearchPal.
 MAX_FOLLOWUP_QUESTION = 5
 
 # SERP & search settings
-MAX_SERP = 5
-SEARCH_PER_SERP = 10
+MAX_SERP = 1
+SEARCH_PER_SERP = 5
 
 # Research recursion depth
 RESEARCH_DEPTH = 2

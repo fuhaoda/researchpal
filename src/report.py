@@ -31,7 +31,7 @@ async def generate_base_report(research_results=None):
     for url_summary in urls_summaries:
          url = url_summary['url']
          summary = url_summary['summary']
-         report += "\n---\n" + "\n---\n" + f"\n [{url}]({url})\n\n{summary}" + "\n\n"
+         report += "\n---\n" + "\n---\n" + f"### [{url}]({url})\n\n{summary}" + "\n\n"
     return report
 
 async def generate_evidence_report(blocks_with_references, supporting_evidence):
@@ -43,22 +43,30 @@ async def generate_evidence_report(blocks_with_references, supporting_evidence):
         # Get supporting evidence for the block; if not available, display a fallback message.
         evidence = supporting_evidence[idx].strip() if idx < len(supporting_evidence) else "No supporting evidence available."
         
-        report += f"## Statement {idx + 1}\n\n"
+        report += "\n---\n" + "\n---\n" + f"## Statement {idx + 1}\n\n"
         report += f"**Statement:**\n\n{statement}\n\n"
         report += f"**Supporting Evidence:**\n\n{evidence}\n\n"
-        report += "\n---\n\n"
+        report += "\n\n\n"
     
-    # Collect all unique reference URLs from each block's references.
-    all_refs = set()
+    report += "\n---\n" + "\n---\n"
+
+    # Collect unique URL and summary pairs from blocks_with_references.
+    unique_refs = {}
     for block in blocks_with_references:
         for ref in block.get("references", []):
             url = ref.get("url")
+            summary = ref.get("summary", "").strip()
             if url:
-                all_refs.add(url)
+                unique_refs[url] = summary  # ensure each url-summary pair is recorded uniquely.
     
-    if all_refs:
-        report += "## All Reference Links\n\n"
-        for url in sorted(all_refs):
-            report += f"- [{url}]({url})\n"
+    # Print out all unique URLs as links.
+    if unique_refs:
+        report += "\n---\n" + "\n---\n" + "# All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in sorted(unique_refs)) + "\n\n"
+    
+    # Print out the unique URL and summary pairs in the appendix.
+    if unique_refs:
+        report += "\n---\n" + "\n---\n" + "# Appendix: Summary of Key Learnings\n\n"
+        for url in sorted(unique_refs):
+            report += "\n---\n" + f"### [{url}]({url})\n\n{unique_refs[url]}\n\n"
     
     return report
