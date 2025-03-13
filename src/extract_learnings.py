@@ -18,5 +18,5 @@ async def extract_learnings(crawled_results):
             summary = result.get("summary", "")
             if summary:
                 url_str = result.get("url", "")
-                learnings += f"{url_separator_begin}\n{url_str}\n{summary.strip()}\n{url_separator_end}\n\n"          
+                learnings += f"{url_separator_begin}\n **Source URL:** \"{url_str}\"\n{summary.strip()}\n{url_separator_end}\n\n"          
     return learnings

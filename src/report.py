@@ -21,6 +21,24 @@ async def generate_base_report(research_results=None):
        str: A markdown-formatted report.
     """
     messages = generate_report_research + research_results.get("messages", [])
+
+   #   ## debug setting begin ##
+   #  import json
+
+   #  def save_messages(messages, filepath):
+   #    """
+   #    Save a list of messages to a JSON file.
+
+   #    Parameters:
+   #       messages (list): The list of message dictionaries to save.
+   #       filepath (str): The path to the file where the messages will be saved.
+   #    """
+   #    with open(filepath, "w", encoding="utf-8") as f:
+   #       json.dump(messages, f, indent=2)
+   #  save_filepath = "output/saved_messages.json"
+   #  save_messages(research_results.get("messages", []), save_filepath)
+   #  ## debug setting end ##
+
     urls = research_results.get("visited_urls", [])
     urls_summaries = research_results.get("urls_summaries", [])
 
@@ -44,7 +62,7 @@ async def generate_evidence_report(blocks_with_references, supporting_evidence):
         evidence = supporting_evidence[idx].strip() if idx < len(supporting_evidence) else "No supporting evidence available."
         
         report += "\n---\n" + "\n---\n" + f"## Statement {idx + 1}\n\n"
-        report += f"**Statement:**\n\n{statement}\n\n"
+        report += "**Statement:**\n\n"+f"> {statement}\n\n"
         report += f"**Supporting Evidence:**\n\n{evidence}\n\n"
         report += "\n\n\n"
     

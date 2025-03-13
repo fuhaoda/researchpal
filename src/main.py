@@ -49,7 +49,7 @@ async def main():
         followup_questions = await followups(user_initial_query_messages)
         print(followup_questions)
 
-        print("\n Enter your follow-up answers (Press Enter + Ctrl+D or Ctrl+Z to finish): \n")
+        print("\n Enter your follow-up answers (Press Enter + Ctrl+D or Ctrl+Z to finish):")
         user_followup_answers = sys.stdin.read().strip() 
         
         messages = [{"role": "assistant", "content": "What's your research question?"},

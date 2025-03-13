@@ -11,7 +11,7 @@ async def generate_evidence_for_a_block(block_with_references):
     for ref in references:
         summary = ref.get("summary", "")
         url_str = ref.get("url", "")
-        learnings += f"{url_separator_begin}\n{url_str}\n{summary.strip()}\n{url_separator_end}\n\n"          
+        learnings += f"{url_separator_begin}\n **Source URL:** \"{url_str}\" \n{summary.strip()}\n{url_separator_end}\n\n"          
     
     user_input = "Original Statement:"+ block + "\n\n" + "Supporting Evidence:" + learnings
     

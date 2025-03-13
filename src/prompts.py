@@ -67,18 +67,20 @@ summarize_crawl =[
 
 ### Generate Report ###
 system_prompt_generate_report_research = """
-Generate two reports: a comprehensive research report based on user inputs and sources, followed by an annotated version with references.
+Generate two sequential reports based on user input and supplementary materials. One is a *Comprehensive Research Report*, and then an *Annotated Report*.
 
 ---
 
-# Report Generation
+# 1. Comprehensive Research Report  
 
-## Input Format
-The input consists of structured messages:
+A detailed, logically structured, and analytically rigorous research report based on user queries, follow-up dialogues, and supplementary materials.  
+
+## **Input Format**  
+Research scope is guided by structured dialogue inputs:  
 
 ```
 [
-    {"role": "assistant", "content": "What's your research question?"},
+    {"role": "assistant", "content": "What is your research question?"},
     {"role": "user", "content": "#user_initial_query"},
     {"role": "assistant", "content": "#followup_questions"},
     {"role": "user", "content": "#user_followup_answers"},
@@ -86,73 +88,103 @@ The input consists of structured messages:
     {"role": "user", "content": "Additional context 2: #current_learnings"}
 ]
 ```
-- **#user_initial_query** - Original research question.
-- **#followup_questions** - Follow-up inquiries generated to refine understanding.
-- **#user_followup_answers** - User-provided responses to follow-up questions.
-- **#current_learnings** - Processed source materials in structured markdown format.
+- **#user_initial_query**: The user's primary research question.  
+- **#followup_questions**: Clarifying questions to refine research direction.  
+- **#user_followup_answers**: Responses shaping the report’s focus.  
+- **#current_learnings**: User-provided structured insights and external sources.  
 
-## Generating the Research Report
-1. Formulate a **suitable research title** based on `#user_initial_query`, `#followup_questions`, and `#user_followup_answers`.
-2. Use all **relevant materials**, particularly under `#current_learnings`.
-3. Ensure **logical structuring** into sections for clarity.
-4. Maintain reasoning before reaching conclusive statements.
-5. The report must span at least **8 pages**, and each section is well developed with details.
-6. Utilize **original phrasing** wherever possible.
+## **Report Structure and Guidelines**  
 
-Once the report is finalized, move to annotation.
+### 1. Establish Clear Research Foundation  
+- **Title**: Concise title reflecting combined insights from user queries and dialogue.  
+- **Introduction** (minimum 400 words): Clearly present research context, objectives, significance, and research questions or hypotheses.  
+
+### 2. Integration of Source Materials  
+- Utilize **all additional context**, incorporating **critical analysis**, key facts, and summaries.  
+- Establish **cause-effect relationships** with citations for credibility.  
+
+### 3. Logical Structure and Depth  
+The research must be **structured into logical sections**, each a minimum of **2 pages**:  
+- **Introduction**: Research context, significance, objectives.  
+- **Literature Review**: Based on **#current_learnings**, discuss existing research, key theories, practical applications, and case studies. **Minimum of 5 pages (~3000 words).**  
+- **Findings and Discussion**: Provide a detailed analysis, supported arguments, current debates and controversies, challenges and limitations, and emerging trends and future directions. **Minimum 1000 words.**  
+- **Conclusion**: Summarized insights, implications, and recommendations.  
+- **Learning Recommendation**: Based on conversations and literature, propose the most logical order to present this research topic to non-experts.  
+
+### 4. Analytical Rigor and Originality  
+- Prioritize **cause-effect reasoning** and **synthesis** over isolated facts.  
+- Arguments must **progress logically** with explicit supporting details.  
+- Ensure **original formulation**, though **direct incorporation of provided materials** in a structured manner is acceptable.  
+
+### 5. Formatting Requirements  
+- Minimum length: **5000 words**.  
+- **Section headings** and **citations** required.  
 
 ---
 
-# Annotated Report Generation
+# 2. Annotated Report  
 
-## Process
-1. **Break down** the report into multiple paragraphs.
-2. For each paragraph, **extract at most 3 references** from the structured `#current_learnings`.
-3. Ensure references are the most relevant for that paragraph.
+Once the Comprehensive Research Report is finalized, generate an **Annotated Report** linking each paragraph to relevant external references.
 
-## Reference Extraction Guidelines
-- Extract references from `#current_learnings` formatted as:
-    ```plaintext
-    #####BEGINNING SEPARATOR#####
-    "url_n"
-    "title_n"
-    Extracted web_n summary
-    #####ENDING SEPARATOR#####
+## **Annotation Process**  
+1. **Divide** the original report into paragraphs.  
+2. **Identify up to 3 highly relevant references** from the structured external sources (`#current_learnings`) for each paragraph.  
+   - Prioritize **high-quality and most relevant references**.  
 
-    #####BEGINNING SEPARATOR#####
-    "url_n"
-    "title_n"
-    Extracted web_n summary
-    #####ENDING SEPARATOR#####
-    ```
-- Each extracted source must include:
-  1. **Reference Title** – Second line of the block (after URL).
-  2. **Link** – Formatted as a clickable Markdown link, show the original url as a text.
-  3. **Statement** – A few key sentences most relevant to the paragraph.
+## **Reference Extraction Format**  
 
-## Formatting and Output
-For each paragraph:
+Each reference annotation should be clearly structured:  
 
-### **Paragraph X from the Report**
-> *Copy paragraph from the report.*
+```
+#####BEGINNING SEPARATOR#####
+**Source URL:** "https://example.com/article1"  
+"Title of Source 1"  
+Extracted web summary 1  
+#####ENDING SEPARATOR#####
+```
 
-### **References for Paragraph X**
-- **Reference Title:** [Title from source]  
+Each reference must contain:  
+- **Reference Title**: Extracted title from provided structured sources.  
+- **Link**: Correct markdown-formatted hyperlink (e.g., [https://example.com/article1](https://example.com/article1)).  
+- **Statement**: Selected key statements closely relevant to the paragraph.  
+
+---
+
+# **Output Format for Annotated Report**  
+
+For each paragraph:  
+
+### **Paragraph X from the Report**  
+> *Copy the exact paragraph from the comprehensive report.*  
+
+### **References for Paragraph X**  
+- **Reference Title:** *Title from provided sources.*  
   **Link:** [URL](URL)  
-  **Statement:** *Relevant extracted content*  
+  **Statement:** *Selected relevant statement(s).*  
 
-- **Reference Title:** [Title from source]  
-  **Link:** [URL](URL)  
-  **Statement:** *Relevant extracted content*  
+---
 
-## Notes
-- Every **page** of the original report must have **at least 5 paragraphs**.
-- Maintain **logical reasoning** before conclusions.
-- Ensure references align with **most relevant content** for accuracy.
-- Extracted references must be **properly formatted** with correct URL and content.
-- Use **clear markdown formatting** for links and annotations.
+# **Example Output**  
 
-This ensures that the research report remains structured, evidence-based, and well-annotated.
+### **Paragraph 1 from the Report**  
+> *In recent years, electric vehicles (EVs) have become increasingly popular as sustainable alternatives to traditional gasoline vehicles. Enhanced battery technology and favorable government policies have significantly contributed to their rapid adoption.*  
+
+### **References for Paragraph 1**  
+- **Reference Title:** *The Rise of Electric Vehicles*  
+  **Link:** [https://example.com/ev-growth](https://example.com/ev-growth)  
+  **Statement:** *Recent improvements in lithium-ion battery efficiency and reduced manufacturing costs have accelerated EV adoption globally.*  
+
+- **Reference Title:** *Government Incentives and EV Adoption*  
+  **Link:** [https://example.com/ev-incentives](https://example.com/ev-incentives)  
+  **Statement:** *Governments worldwide offer incentives such as subsidies and tax breaks, significantly boosting consumer interest in electric vehicles.*  
+
+---
+
+# **Additional Notes**  
+- Ensure each paragraph has a corresponding annotated version.  
+- **Ensure correctly formatted, clickable URLs** in annotations.  
+- All references must be formatted in **markdown for clarity**.  
+- **Logical coherence and analytical depth** must be upheld throughout **both reports**.
 """.strip()
 
 generate_report_research = [{
@@ -193,7 +225,7 @@ Extract the most related supporting evidence from multiple summaries to match th
    ```
    **Statement**: [Most related extracted sentence or brief two-sentence summary]  
    **Reference Title**: [Title extracted from the corresponding summary]  
-   **Link**: [URL](URL)
+   **Link**: [URL](URL) (for example, [https://example.com](https://example.com))
    ```
 
    Ensure that the link is fully visible and clickable.
@@ -206,13 +238,13 @@ Original Statement: Climate change accelerates extreme weather events.
 
 Supporting Evidence:
 #####BEGINNING SEPARATOR#####
-"https://example.com/article1"
+**Source URL:**  "https://example.com/article1"
 "Rising Temperatures Increase Storm Frequency"
 Recent studies indicate that climate change is causing more frequent and intense hurricanes.
 #####ENDING SEPARATOR#####
 
 #####BEGINNING SEPARATOR#####
-"https://example.com/article2"
+**Source URL:**  "https://example.com/article2"
 "Record Heat Waves Globally"
 Data from NOAA shows that global temperatures have reached unprecedented highs in the last decade.
 #####ENDING SEPARATOR#####
