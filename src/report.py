@@ -7,6 +7,7 @@ append reference blocks for each report chunk.
 from src.ai import get_ai_responses
 from src.utils import ModelType
 from src.prompts import generate_report_research
+from src.generate_annotated_report import generate_annotated_report
 
 async def generate_base_report(research_results=None):
     """
@@ -44,13 +45,17 @@ async def generate_base_report(research_results=None):
 
     report = await get_ai_responses(messages= messages, model= ModelType.SUMMARIZING)
 
-    report += "\n\n" + "## All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n"
-    report += "\n\n" + "\n---\n" + "\n" + "# Appendix: Summary of Key Learnings \n\n"
+    annotated_report = await generate_annotated_report(report, urls_summaries)   
+
+    final_report =  report + annotated_report+ "\n\n" + "## All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n"
+    
+    final_report += "\n\n" + "\n---\n" + "\n" + "# Appendix: Summary of Key Learnings \n\n"
+    
     for url_summary in urls_summaries:
          url = url_summary['url']
          summary = url_summary['summary']
-         report += "\n---\n" + "\n---\n" + f"### [{url}]({url})\n\n{summary}" + "\n\n"
-    return report
+         final_report += "\n---\n" + "\n---\n" + f"### [{url}]({url})\n\n{summary}" + "\n\n"
+    return final_report
 
 async def generate_evidence_report(blocks_with_references, supporting_evidence):
     report = "# Final Evidence Report\n\n"

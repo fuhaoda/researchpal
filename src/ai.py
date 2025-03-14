@@ -36,3 +36,11 @@ async def get_ai_responses(*, messages, model):
     except Exception as e:
         print(f"Error communicating with OpenAI: {e}")
         return "Sorry, I couldn't generate a response."
+
+async def get_embbded_text(text):
+    client = AsyncOpenAI()
+    response = await client.embeddings.create(
+    input=text,
+    model="text-embedding-3-small"
+    )
+    return response.data[0].embedding

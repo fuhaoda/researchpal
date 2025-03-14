@@ -41,11 +41,10 @@ async def crawl_url(url):
             return {
                 "url": url,
                 "success": result.success,
-                "markdown": result.markdown if result.success else "",
                 "summary": summary if result.success else ""
             }
     except Exception as e:
-        return {"url": url, "success": False, "markdown": "", "summary":"","error": str(e)}
+        return {"url": url, "success": False, "summary":"","error": str(e)}
 
 async def crawl_urls(urls):
     """
