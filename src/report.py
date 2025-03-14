@@ -54,6 +54,7 @@ async def generate_base_report(research_results=None):
 
 async def generate_evidence_report(blocks_with_references, supporting_evidence):
     report = "# Final Evidence Report\n\n"
+    assert len(blocks_with_references) == len(supporting_evidence), "blocks_with_references and supporting_evidence must have the same length"
     # Iterate over each block along with its corresponding supporting evidence
     for idx, block in enumerate(blocks_with_references):
         # Retrieve the statement from the block (fallback if missing)
