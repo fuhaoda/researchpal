@@ -67,18 +67,15 @@ summarize_crawl =[
 
 ### Generate Report ###
 system_prompt_generate_report_research = """
-Generate two sequential reports based on user input and supplementary materials. One is a *Comprehensive Research Report*, and then an *Annotated Report*.
+# **Comprehensive Research Report Generation**
 
----
+This task requires generating a **detailed, well-structured, and analytically rigorous** research report based on user queries, follow-up dialogues, and supplementary materials. The content must integrate user-provided context and external references while maintaining logical coherence and depth.
 
-# 1. Comprehensive Research Report  
+## **Input Format and Research Scope**
 
-A detailed, logically structured, and analytically rigorous research report based on user queries, follow-up dialogues, and supplementary materials.  
+The report is guided by structured dialogue inputs, typically formatted in a Python list as follows:
 
-## **Input Format**  
-Research scope is guided by structured dialogue inputs:  
-
-```
+```python
 [
     {"role": "assistant", "content": "What is your research question?"},
     {"role": "user", "content": "#user_initial_query"},
@@ -88,103 +85,96 @@ Research scope is guided by structured dialogue inputs:
     {"role": "user", "content": "Additional context 2: #current_learnings"}
 ]
 ```
-- **#user_initial_query**: The user's primary research question.  
-- **#followup_questions**: Clarifying questions to refine research direction.  
-- **#user_followup_answers**: Responses shaping the report’s focus.  
-- **#current_learnings**: User-provided structured insights and external sources.  
 
-## **Report Structure and Guidelines**  
+### **Key Input Components:**  
+- **#user_initial_query**: The primary research question or problem statement provided by the user.  
+- **#followup_questions**: Clarifying and refining questions to better define the research scope.  
+- **#user_followup_answers**: User responses that help shape the focus of the report.  
+- **#current_learnings**: User-supplied insights from external materials, structured data, research sources, or expert opinions.  
 
-### 1. Establish Clear Research Foundation  
-- **Title**: Concise title reflecting combined insights from user queries and dialogue.  
-- **Introduction** (~300 words): Clearly present research context, objectives, significance, and research questions or hypotheses.  
-
-### 2. Integration of Source Materials  
-- Utilize **all additional context**, incorporating **critical analysis**, key facts, and summaries.  
-- Establish **cause-effect relationships** with citations for credibility.  
-
-### 3. Logical Structure and Depth  
-The research must be **structured into logical sections**, each a minimum of **2 pages**:  
-- **Introduction**: Research context, significance, objectives.  
-- **Literature Review**: Based on **#current_learnings**, discuss existing research, key theories, practical applications, and case studies. **Minimum of 5 pages (~3000 words).**  
-- **Findings and Discussion**: Provide a detailed analysis, supported arguments, current debates and controversies, challenges and limitations, and emerging trends and future directions. **Minimum 1000 words.**  
-- **Conclusion**: Summarized insights, implications, and recommendations.  
-- **Learning Recommendation**: Based on conversations and literature, propose the most logical order to present this research topic to non-experts.  
-
-### 4. Analytical Rigor and Originality  
-- Prioritize **cause-effect reasoning** and **synthesis** over isolated facts.  
-- Arguments must **progress logically** with explicit supporting details.  
-- Ensure **original formulation**, though **direct incorporation of provided materials** in a structured manner is acceptable.  
-
-### 5. Formatting Requirements  
-- Minimum length: **5000 words**.  
-- **Section headings** and **citations** required.  
+The final report must consolidate these components into a **cohesive and in-depth analysis** that adheres to research standards.
 
 ---
 
-# 2. Annotated Report  
+## **Report Structure and Guidelines**
 
-Once the Comprehensive Research Report is finalized, generate an **Annotated Report** linking each paragraph to relevant external references.
+The comprehensive research report should follow a **logical, well-organized structure** that facilitates readability and academic rigor.
 
-## **Annotation Process**  
-1. **Divide** the original report into paragraphs.  
-2. **Identify up to 3 highly relevant references** from the structured external sources (`#current_learnings`) for each paragraph.  
-   - Prioritize **high-quality and most relevant references**.  
-
-## **Reference Extraction Format**  
-
-Each reference annotation should be clearly structured:  
-
-```
-#####BEGINNING SEPARATOR#####
-**Source URL:** "https://example.com/article1"  
-"Title of Source 1"  
-Extracted web summary 1  
-#####ENDING SEPARATOR#####
-```
-
-Each reference must contain:  
-- **Reference Title**: Extracted title from provided structured sources.  
-- **Link**: Correct markdown-formatted hyperlink (e.g., [https://example.com/article1](https://example.com/article1)).  
-- **Statement**: Selected key statements closely relevant to the paragraph.  
+### **1. Establish a Strong Research Foundation**  
+- **Title**: A concise and precise title that captures the essence of the research question and objectives.  
+- **Table of Contents**: List section titles only (no subsections).  
+- **Introduction** (~1000 words):  
+  - Clearly define the research context, objectives, and significance.  
+  - Align the research problem with relevant theoretical or practical implications.  
+  - Articulate specific research questions or hypotheses that guide the study.  
 
 ---
 
-# **Output Format for Annotated Report**  
-
-For each paragraph:  
-
-### **Paragraph X from the Report**  
-> *Copy the exact paragraph from the comprehensive report.*  
-
-### **References for Paragraph X**  
-- **Reference Title:** *Title from provided sources.*  
-  **Link:** [URL](URL)  
-  **Statement:** *Selected relevant statement(s).*  
+### **2. Integration and Synthesis of Source Materials**  
+All analysis must be built upon a solid foundation of reasoning before reaching conclusions:  
+- Incorporate all **additional context (#current_learnings) and user-generated insights** into the analysis.  
+- Establish **cause-effect relationships** with proper theoretical grounding before making claims.  
+- Perform **critical evaluations** of cited materials rather than merely summarizing facts.  
+- Analyze alternative viewpoints to enhance depth and rigor—arguments should be developed fully before presenting conclusions.  
+- Ensure that reasoning flows **logically** from evidence to findings in a progressive, structured manner.  
 
 ---
 
-# **Example Output**  
+### **3. Logical Organization and Depth**  
+Each section should be **comprehensive and detailed**, ensuring analytical depth by maintaining a **minimum of two pages** per core section:  
 
-### **Paragraph 1 from the Report**  
-> *In recent years, electric vehicles (EVs) have become increasingly popular as sustainable alternatives to traditional gasoline vehicles. Enhanced battery technology and favorable government policies have significantly contributed to their rapid adoption.*  
-
-### **References for Paragraph 1**  
-- **Reference Title:** *The Rise of Electric Vehicles*  
-  **Link:** [https://example.com/ev-growth](https://example.com/ev-growth)  
-  **Statement:** *Recent improvements in lithium-ion battery efficiency and reduced manufacturing costs have accelerated EV adoption globally.*  
-
-- **Reference Title:** *Government Incentives and EV Adoption*  
-  **Link:** [https://example.com/ev-incentives](https://example.com/ev-incentives)  
-  **Statement:** *Governments worldwide offer incentives such as subsidies and tax breaks, significantly boosting consumer interest in electric vehicles.*  
+#### **Main Sections and Minimum Length Requirements**  
+- **Introduction**: Defines purpose, research significance, and key objectives (~1000 words).  
+- **Literature Review**:  
+  - Summarizes relevant existing research findings.  
+  - Reviews key theories and conceptual models.  
+  - Discusses practical applications and case studies.  
+  - Presents gaps in the current research landscape with alternative perspectives.  
+  - **Minimum of 5000 words.**  
+- **Findings and Discussion**:  
+  - Develops insights through logical reasoning and analytical rigor **before stating conclusions**.  
+  - Presents supported arguments, competing perspectives, and critical debates.  
+  - Evaluates challenges, limitations, biases, and possible counterarguments.  
+  - Explores emerging trends and future research directions.  
+  - **Minimum 1000 words.**  
+- **Conclusion**:  
+  - Summarizes findings concisely **while strictly deriving conclusions from previous reasoning**.  
+  - Provides key takeaways, implications, and recommendations.  
+- **Learning Recommendation**:  
+  - Structures the most logical order of presentation for a non-expert audience.  
+  - Connects research insights to actionable learning pathways.  
 
 ---
 
-# **Additional Notes**  
-- Ensure each paragraph has a corresponding annotated version.  
-- **Ensure correctly formatted, clickable URLs** in annotations.  
-- All references must be formatted in **markdown for clarity**.  
-- **Logical coherence and analytical depth** must be upheld throughout **both reports**.
+### **4. Ensuring Analytical Rigor and Originality**  
+- Emphasize **cause-and-effect reasoning** rather than presenting isolated data points.  
+- Ensure **each argument is well-supported** with logical justifications **before drawing conclusions**.  
+- Explore **alternative theories, limitations, and counterpoints** actively to preemptively address counterarguments.  
+- **Avoid overly descriptive writing**—critical engagement with concepts and arguments is necessary.  
+- Structure arguments so that **conclusions come only after sufficient analytical buildup**.  
+- Ensure the report demonstrates **original thought**, even when directly integrating provided source materials.  
+- Derive insights primarily from **#current_learnings**, ensuring usage of facts, data, and concrete evidence.
+
+---
+
+### **5. Formatting and Length Requirements**  
+- **Minimum word count**: 10000 words (preferably 12000 words).  
+- Use **clear section headings** to enhance readability.  
+- **Citations and references** are required for sourced content.  
+- Follow an **academic citation standard** (such as APA, MLA, or Chicago format).  
+- Structure paragraphs with well-defined topic sentences and smooth transitions.
+
+---
+
+## **Deliverables and Evaluation Criteria**  
+The final report should be:  
+✔ **Comprehensive**: Detailed exploration of the research subject, addressing all key elements.  
+✔ **Logically structured**: Coherent progression of ideas with well-defined sections.  
+✔ **Well-supported**: Uses citations, research findings, and logical arguments.  
+✔ **Critically engaged**: Actively synthesizes findings rather than restating facts.  
+✔ **Readability-focused**: Balances in-depth analysis with accessibility for a broader audience.  
+
+Ensure all sections maintain **strong analytical depth**, and avoid summarizing information without deeper engagement. **Each section should logically lead to the next, culminating in properly justified conclusions.**
 """.strip()
 
 generate_report_research = [{
@@ -266,4 +256,74 @@ Data from NOAA shows that global temperatures have reached unprecedented highs i
 find_evidence = [{
     "role": "system",
     "content": system_prompt_find_supporting_evidence
+}]
+
+
+
+system_prompt_extract_title_n_one_sentence = """
+Based on the **Report Block**, extract key information from the **Reference Summary** to generate a two-line output.
+
+# Input Format
+
+The input consists of:
+- **Report Block**: Starts with "**Report Block**:"
+- **Reference Summary**: Follows the Report Block and starts with "**Reference Summary:**"
+
+The **Reference Summary** follows this structure:
+# [Title]
+**Executive Summary**  
+*A detailed summary of the key points using simple language.*
+
+**Detailed Summary**  
+*A more detailed exposition, no longer than one page.*
+
+# Task
+
+1. **Extract the Title**  
+   - Identify the title from the Reference Summary, which is usually the first line.
+
+2. **Select the Most Relevant Statement**  
+   - Find a single sentence most relevant to the **Report Block** from either:
+     - The **Detailed Summary**, or  
+     - The **Executive Summary**  
+   - This sentence should best support the **Report Block**.
+
+# Output Format
+
+The response should be in the following format:
+
+**Reference Title**: [Extracted title]
+**Statement**: [Most relevant extracted sentence]
+
+# Notes
+
+- The extracted statement should be concise and directly support the **Report Block**.
+- Prioritize sentences that clearly relate to the **Report Block**'s content.
+- Ensure the title is correctly extracted without modification.
+
+
+# Example  
+
+### **Input:**  
+```
+**Report Block**: 
+The impact of climate change on agriculture has intensified over the past decade.  
+
+**Reference Summary**:  
+# Climate Change and Agriculture  
+**Executive Summary**  
+Climate change is affecting crop yields worldwide.  
+
+**Detailed Summary**  
+Studies indicate that rising temperatures and irregular rainfall patterns are major challenges for farmers. Sustainable farming practices are being promoted as a solution to mitigate risks.  Climate change has led to unpredictable weather patterns, affecting crop yields worldwide.  
+```  
+
+### **Output:**  
+**Reference Title**: Climate Change and Agriculture  
+**Statement**: Climate change has led to unpredictable weather patterns, affecting crop yields worldwide.  
+""".strip()
+
+extract_title_n_one_sentence = [{
+    "role": "system",
+    "content": system_prompt_extract_title_n_one_sentence
 }]
