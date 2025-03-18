@@ -15,7 +15,7 @@ import asyncio
 
 from src.config import RESEARCH_DEPTH
 from src.research import conduct_research
-from src.report import generate_base_report, generate_evidence_report
+from src.report import generate_research_report, generate_evidence_report
 from src.progress import ProgressManager
 from src.followups import followups
 from src.utils import split_into_three_sentences, unique_urls, ModelType
@@ -29,7 +29,7 @@ async def get_short_description(text):
     """
     Generate a short description from the first few words of the given text.
     """
-    message = [{"role":"system", "content": "find 3 words to summariz user input so that I can put in a file name."},{"role": "user", "content": text}]
+    message = [{"role":"system", "content": "Find three English words to summarize the user input so that they can be used in a filename. The three words should be separated by spaces. No special characters are allowed."},{"role": "user", "content": text}]
     short_title = await get_ai_responses(messages=message, model=ModelType.SUMMARIZING)
     from datetime import datetime
     processed_title = short_title.strip().replace(" ", "_").lower()
@@ -66,14 +66,15 @@ async def main():
         
         research_results = await conduct_research(messages=messages, depth=RESEARCH_DEPTH, progress=progress)
         
-        progress.update("Generating research report...")
-        base_report = await generate_base_report(research_results=research_results)
+        progress.update("Completed gathering information...")
+        final_research_report = await generate_research_report(research_results=research_results, progress=progress)
         
+        progress.update("Generate the file name to save...")
         short_desc = await get_short_description(user_initial_query)
         output_filename = os.path.join("output", f"research_{short_desc}.md")
         os.makedirs("output", exist_ok=True)
         with open(output_filename, "w", encoding="utf-8") as f:
-            f.write(base_report)
+            f.write(final_research_report)
         print(f"Final report saved to {output_filename}\n")
         
         

@@ -9,7 +9,7 @@ from src.utils import ModelType
 from src.prompts import generate_report_research
 from src.generate_annotated_report import generate_annotated_report
 
-async def generate_base_report(research_results=None):
+async def generate_research_report(research_results=None, progress=None):
     """
     Generate a base report from the research question and key learnings.
     (A real implementation would call the OpenAI SUMMARIZING_MODEL.)
@@ -40,13 +40,20 @@ async def generate_base_report(research_results=None):
    #  save_messages(research_results.get("messages", []), save_filepath)
    #  ## debug setting end ##
 
-    urls = research_results.get("visited_urls", [])
-    urls_summaries = research_results.get("urls_summaries", [])
-
+    
+    if progress:
+        progress.update(f"Generating base report...")  
     report = await get_ai_responses(messages= messages, model= ModelType.SUMMARIZING)
 
-    annotated_report = await generate_annotated_report(report, urls_summaries)   
+    urls = research_results.get("visited_urls", [])
+    urls_summaries = research_results.get("urls_summaries", [])
+    
+    if progress:
+        progress.update(f"Generating annotated report...")  
+    annotated_report = await generate_annotated_report(report, urls_summaries,progress=progress)   
 
+    if progress:
+        progress.update(f"Generating the final research report...")    
     final_report =  report + annotated_report+ "\n\n" + "## All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n"
     
     final_report += "\n\n" + "\n---\n" + "\n" + "# Appendix: Summary of Key Learnings \n\n"

@@ -6,30 +6,33 @@ from src.ai import get_ai_responses
 from src.utils import ModelType
 from src.prompts import extract_title_n_one_sentence
 
-async def generate_annotated_report(base_report, urls_with_summaries):
+async def generate_annotated_report(base_report, urls_with_summaries, progress=None):
+    if progress:
+        progress.update(f"Generating annotated report: selecting relevant references ...")  
     blocks = split_into_three_sentences(base_report)
     blocks_with_selected_references =await relevant_references_selector(blocks, urls_with_summaries)
 
     # For each block and each of its selected references, create a task to generate a supporting statement.
-    ## debug setting begin ##
-    import json
-    import os
+    # ## debug setting begin ##
+    # import json
+    # import os
 
-    def save_debug_info(data, filename="debug_blocks.json"):
-        """
-        Saves the provided 'blocks_with_selected_references' data to a JSON file in the project root output folder.
-        """
-        output_dir = os.path.join(os.getcwd(), "output")
-        os.makedirs(output_dir, exist_ok=True)
-        file_path = os.path.join(output_dir, filename)
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
-        print(f"Debug data saved to {file_path}")
+    # def save_debug_info(data, filename="debug_blocks.json"):
+    #     """
+    #     Saves the provided 'blocks_with_selected_references' data to a JSON file in the project root output folder.
+    #     """
+    #     output_dir = os.path.join(os.getcwd(), "output")
+    #     os.makedirs(output_dir, exist_ok=True)
+    #     file_path = os.path.join(output_dir, filename)
+    #     with open(file_path, "w", encoding="utf-8") as f:
+    #         json.dump(data, f, indent=4)
+    #     print(f"Debug data saved to {file_path}")
 
-    save_debug_info(blocks_with_selected_references)
+    # save_debug_info(blocks_with_selected_references)
     
-    ## debug setting end ##
-
+    # ## debug setting end ##
+    if progress:
+        progress.update(f"Generating annotated report: generating one sentence summary for each reference...")  
     support_tasks = []
     for block_index, block_item in enumerate(blocks_with_selected_references):
         block_text = block_item["block"]
