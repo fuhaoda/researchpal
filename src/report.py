@@ -54,14 +54,8 @@ async def generate_research_report(research_results=None, progress=None):
 
     if progress:
         progress.update(f"Generating the final research report...")    
-    final_report =  report + annotated_report+ "\n\n" + "## All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n"
+    final_report =  report + annotated_report+ "\n\n" + "## All Reference Links\n\n" + "\n".join(f"- [{url}]({url})" for url in urls) + "\n\n" +"\n\n" + "\n---\n"
     
-    final_report += "\n\n" + "\n---\n" + "\n" + "# Appendix: Summary of Key Learnings \n\n"
-    
-    for url_summary in urls_summaries:
-         url = url_summary['url']
-         summary = url_summary['summary']
-         final_report += "\n---\n" + "\n---\n" + f"### [{url}]({url})\n\n{summary}" + "\n\n"
     return final_report
 
 async def generate_evidence_report(blocks_with_references, supporting_evidence):
@@ -101,3 +95,16 @@ async def generate_evidence_report(blocks_with_references, supporting_evidence):
             report += "\n---\n" + f"### [{url}]({url})\n\n{unique_refs[url]}\n\n"
     
     return report
+
+
+async def appendix_report(research_results=None):
+    urls_summaries = research_results.get("urls_summaries", [])
+    
+    appendix = "# Appendix: Summary of Key Learnings \n\n"
+    
+    for url_summary in urls_summaries:
+         url = url_summary['url']
+         summary = url_summary['summary']
+         appendix += "\n---\n" + "\n---\n" + f"### [{url}]({url})\n\n{summary}" + "\n\n"
+
+    return appendix

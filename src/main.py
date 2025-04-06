@@ -15,7 +15,7 @@ import asyncio
 
 from src.config import RESEARCH_DEPTH
 from src.research import conduct_research
-from src.report import generate_research_report, generate_evidence_report
+from src.report import generate_research_report, generate_evidence_report, appendix_report
 from src.progress import ProgressManager
 from src.followups import followups
 from src.utils import split_into_three_sentences, unique_urls, ModelType
@@ -57,20 +57,31 @@ async def main():
 
         print("\n Enter your follow-up answers (Press Enter + Ctrl+D or Ctrl+Z to finish):")
         user_followup_answers = sys.stdin.read().strip() 
-        
+
         messages = [{"role": "assistant", "content": "What's your research question?"},
                     {"role": "user", "content": user_initial_query}, 
                     {"role": "assistant", "content": followup_questions}, 
                     {"role": "user", "content": user_followup_answers}]
         progress.update("Starting research process...")
         
+        progress.update("Generate short title...")
+        short_desc = await get_short_description(user_initial_query)
+
         research_results = await conduct_research(messages=messages, depth=RESEARCH_DEPTH, progress=progress)
         
         progress.update("Completed gathering information...")
-        final_research_report = await generate_research_report(research_results=research_results, progress=progress)
         
-        progress.update("Generate the file name to save...")
-        short_desc = await get_short_description(user_initial_query)
+        appendix = await appendix_report(research_results=research_results)
+        output_filename = os.path.join("output", f"research_reference_{short_desc}.md")
+        os.makedirs("output", exist_ok=True)
+        with open(output_filename, "w", encoding="utf-8") as f:
+            f.write(appendix)
+        progress.update(f"Appendix saved to {output_filename}")
+
+        # save the appendix first before generating the final report. Sometimes the final report generation may fail.
+        final_research_report = await generate_research_report(research_results=research_results, progress=progress)
+        final_research_report += appendix
+        
         output_filename = os.path.join("output", f"research_{short_desc}.md")
         os.makedirs("output", exist_ok=True)
         with open(output_filename, "w", encoding="utf-8") as f:
