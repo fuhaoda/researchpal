@@ -10,7 +10,7 @@ from enum import Enum
 class ModelType(Enum):
     KNOWLEDGEABLE = "chatgpt-4o-latest"
     REASONING = "o3-mini"
-    SUMMARIZING = "gpt-4o-mini"
+    SUMMARIZING = "gpt-4.1-mini"
 
 url_separator_begin = "#####BEGINING SEPARATOR#####"
 url_separator_end = "#####ENDING SEPARATOR#####"

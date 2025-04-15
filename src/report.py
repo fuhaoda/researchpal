@@ -8,6 +8,8 @@ from src.ai import get_ai_responses
 from src.utils import ModelType
 from src.prompts import generate_report_research
 from src.generate_annotated_report import generate_annotated_report
+import os
+import json
 
 async def generate_research_report(research_results=None, progress=None):
     """
@@ -26,19 +28,19 @@ async def generate_research_report(research_results=None, progress=None):
    #   ## debug setting begin ##
    #  import json
 
-   #  def save_messages(messages, filepath):
-   #    """
-   #    Save a list of messages to a JSON file.
+    def save_messages(messages, filepath):
+      """
+      Save a list of messages to a JSON file.
 
-   #    Parameters:
-   #       messages (list): The list of message dictionaries to save.
-   #       filepath (str): The path to the file where the messages will be saved.
-   #    """
-   #    with open(filepath, "w", encoding="utf-8") as f:
-   #       json.dump(messages, f, indent=2)
-   #  save_filepath = "output/saved_messages.json"
-   #  save_messages(research_results.get("messages", []), save_filepath)
-   #  ## debug setting end ##
+      Parameters:
+         messages (list): The list of message dictionaries to save.
+         filepath (str): The path to the file where the messages will be saved.
+      """
+      with open(filepath, "w", encoding="utf-8") as f:
+         json.dump(messages, f, indent=2)
+    save_filepath = "output/saved_messages.json"
+    save_messages(research_results.get("messages", []), save_filepath)
+    ## debug setting end ##
 
     
     if progress:
@@ -48,9 +50,32 @@ async def generate_research_report(research_results=None, progress=None):
     urls = research_results.get("visited_urls", [])
     urls_summaries = research_results.get("urls_summaries", [])
     
+    # Save the base report and urls_summaries to a file for debugging purposes.
+
+    output_dir = "output"
+    os.makedirs(output_dir, exist_ok=True)
+    report_path = os.path.join(output_dir, "report.md")
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(report)
+
+    urls_summaries_path = os.path.join(output_dir, "urls_summaries.json")
+    with open(urls_summaries_path, "w", encoding="utf-8") as f:
+        json.dump(urls_summaries, f, indent=2)
+
+    visited_urls_path = os.path.join(output_dir, "visited_urls.json")
+    with open(visited_urls_path, "w", encoding="utf-8") as f:
+        json.dump(urls, f, indent=2)
+
+
+    # Example of loading the data
+    # with open(report_path, "r", encoding="utf-8") as f:
+    #    report = f.read()    
+    # with open(urls_summaries_path, "r", encoding="utf-8") as f:
+    #    urls_summaries = json.load(f)
+
     if progress:
         progress.update(f"Generating annotated report...")  
-    annotated_report = await generate_annotated_report(report, urls_summaries,progress=progress)   
+    annotated_report = await generate_annotated_report(report, urls_summaries, progress=progress)   
 
     if progress:
         progress.update(f"Generating the final research report...")    
