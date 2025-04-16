@@ -240,9 +240,9 @@ messages_research_report_toc = [{
 
 def section_generation_messages(section_summary, accumulated_content):
     section_prompt = (
-            f"Generate detailed content for at least 3000 words based on the materials in '{section_summary}'. "
-            "Do not generate a section title or any subheadings. Focus on writing long, cohesive paragraphs that flow naturally from the prior content, maintaining a consistent narrative and argumentative trajectory."
-            "Use the following materials as your primary sources: - A list of assistant and user messages (including research questions and follow-ups). - The `Additional context` (online research provided by the user). Extract key ideas, arguments, and factual evidence from these materials. Ideally including relevant quotations, paraphrases, or citations where appropriate."
+            f"Generate detailed content for at least 3000 words **only focus** on the topics in '{section_summary}'. "
+            "Do not generate a section title or any subheadings. Focus on writing long, cohesive paragraphs that flow naturally from the prior content, maintaining a consistent narrative and argumentative trajectory, do not repeat materials which have been written in previous sections."
+            "Use the `Additional context` provided by the user as your key reference. Extract key ideas, arguments, and factual evidence from these materials. Ideally including relevant quotations, paraphrases, or citations where appropriate. Ensure your response includes specific details, concrete facts, and in-depth analysis, rather than only high-level summaries, so the content is thorough and comprehensive."
             "Here is what has been generated so far:\n\n" + accumulated_content
         )
     
@@ -255,7 +255,7 @@ async def main():
     progress = ProgressManager()
     progress.update(f"Loaded messages for generating report:")  
     
-
+    
     toc_messages = messages_research_report_toc + messages
     progress.update(f"Generating Table of Contents...")  
     table_of_contents = await get_ai_responses(messages=toc_messages, model=ModelType.REASONING)
@@ -286,6 +286,7 @@ async def main():
     progress.update(f"Generating Sections ...")  
 
    
+    messages = messages[4:]
 
     async def generate_sections(sections, idx=0, accumulated_content=""):
         if idx >= len(sections):
@@ -297,7 +298,7 @@ async def main():
         section_title = section_summary.split("\n")[0].strip()  
         section_messages = section_generation_messages(section_summary, accumulated_content) + messages
 
-        section_content = "## "+ section_title +"\n\n" + await get_ai_responses(messages=section_messages, model=ModelType.SUMMARIZING)
+        section_content = "## "+ section_title +"\n\n" + await get_ai_responses(messages=section_messages, model=ModelType.DRAFTING)
         # Append current section to the accumulated content.
        
         new_accumulated_content = accumulated_content +  section_content + "\n\n"

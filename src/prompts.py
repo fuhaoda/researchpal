@@ -412,9 +412,9 @@ messages_research_report_toc = [{
 
 def section_generation_messages(section_summary, accumulated_content):
     section_prompt = (
-            f"Generate detailed content for at least 3000 words based on the materials in '{section_summary}'. "
-            "Do not generate a section title or any subheadings. Focus on writing long, cohesive paragraphs that flow naturally from the prior content, maintaining a consistent narrative and argumentative trajectory."
-            "Use the following materials as your primary sources: - A list of assistant and user messages (including research questions and follow-ups). - The `Additional context` (online research provided by the user). Extract key ideas, arguments, and factual evidence from these materials. Ideally including relevant quotations, paraphrases, or citations where appropriate."
+            f"Generate detailed content for at least 3000 words **only focus** on the topics in '{section_summary}'. "
+            "Do not generate a section title or any subheadings. Focus on writing long, cohesive paragraphs that flow naturally from the prior content, maintaining a consistent narrative and argumentative trajectory, do not repeat materials which have been written in previous sections."
+            "Use the `Additional context` provided by the user as your key reference. Extract key ideas, arguments, and factual evidence from these materials. Ideally including relevant quotations, paraphrases, or citations where appropriate. Ensure your response includes specific details, concrete facts, and in-depth analysis, rather than only high-level summaries, so the content is thorough and comprehensive."
             "Here is what has been generated so far:\n\n" + accumulated_content
         )
     

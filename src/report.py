@@ -23,7 +23,7 @@ async def generate_sections(sections, idx=0, accumulated_content="", messages = 
         section_title = section_summary.split("\n")[0].strip()  
         section_messages = section_generation_messages(section_summary, accumulated_content) + messages
 
-        section_content = "## "+ section_title +"\n\n" + await get_ai_responses(messages=section_messages, model=ModelType.SUMMARIZING)
+        section_content = "## "+ section_title +"\n\n" + await get_ai_responses(messages=section_messages, model=ModelType.DRAFTING)
         # Append current section to the accumulated content.
        
         new_accumulated_content = accumulated_content +  section_content + "\n\n"
@@ -82,7 +82,8 @@ async def generate_research_report(research_results=None, progress=None):
         progress.update(f"Generating Sections ...")  
 
     # Generate the report body by recursively processing all sections.
-    report_body = await generate_sections(sections, messages= messages, progress=progress)
+    reference_messages = messages[4:]
+    report_body = await generate_sections(sections, messages= reference_messages, progress=progress)
     report = "# "+ title + "\n\n" + report_body
     
 

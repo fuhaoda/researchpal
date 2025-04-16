@@ -11,6 +11,7 @@ class ModelType(Enum):
     KNOWLEDGEABLE = "chatgpt-4o-latest"
     REASONING = "o3-mini"
     SUMMARIZING = "gpt-4.1-mini"
+    DRAFTING = "gpt-4.1"
 
 url_separator_begin = "#####BEGINING SEPARATOR#####"
 url_separator_end = "#####ENDING SEPARATOR#####"
