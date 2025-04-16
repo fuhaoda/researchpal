@@ -5,11 +5,32 @@ append reference blocks for each report chunk.
 """
 
 from src.ai import get_ai_responses
-from src.utils import ModelType
-from src.prompts import generate_report_research
+from src.utils import ModelType, parse_toc
+from src.prompts import messages_research_report_toc, section_generation_messages
 from src.generate_annotated_report import generate_annotated_report
 import os
 import json
+
+
+async def generate_sections(sections, idx=0, accumulated_content="", messages = None, progress=None):
+        if idx >= len(sections):
+            return ""
+        section_summary = sections[idx]
+        # Create a prompt that includes the accumulated content to ensure smooth flow.
+        if progress: 
+            progress.update(f"Generating section {idx + 1}/{len(sections)}: {section_summary}")
+        # Extract the title from the first line of the section summary
+        section_title = section_summary.split("\n")[0].strip()  
+        section_messages = section_generation_messages(section_summary, accumulated_content) + messages
+
+        section_content = "## "+ section_title +"\n\n" + await get_ai_responses(messages=section_messages, model=ModelType.SUMMARIZING)
+        # Append current section to the accumulated content.
+       
+        new_accumulated_content = accumulated_content +  section_content + "\n\n"
+        # Recursively generate the remaining sections with the updated context.
+        remaining_content = await generate_sections(sections, idx + 1, new_accumulated_content, messages=messages, progress=progress)
+        return section_content + "\n\n" + remaining_content
+
 
 async def generate_research_report(research_results=None, progress=None):
     """
@@ -23,7 +44,7 @@ async def generate_research_report(research_results=None, progress=None):
     Returns:
        str: A markdown-formatted report.
     """
-    messages = generate_report_research + research_results.get("messages", [])
+    messages = research_results.get("messages", [])
 
    #   ## debug setting begin ##
    #  import json
@@ -45,7 +66,25 @@ async def generate_research_report(research_results=None, progress=None):
     
     if progress:
         progress.update(f"Generating base report...")  
-    report = await get_ai_responses(messages= messages, model= ModelType.SUMMARIZING)
+    
+    
+    if progress:
+        progress.update(f"Generating Table of Contents...")  
+    toc_messages = messages_research_report_toc + messages    
+    table_of_contents = await get_ai_responses(messages=toc_messages, model=ModelType.REASONING)
+    
+    
+    # Parse the table of contents to extract the title and sections.
+    title, sections = parse_toc(table_of_contents)
+
+    # Define an async recursive function to generate each report section, including previously generated content for continuity.
+    if progress:
+        progress.update(f"Generating Sections ...")  
+
+    # Generate the report body by recursively processing all sections.
+    report_body = await generate_sections(sections, messages= messages, progress=progress)
+    report = "# "+ title + "\n\n" + report_body
+    
 
     urls = research_results.get("visited_urls", [])
     urls_summaries = research_results.get("urls_summaries", [])
