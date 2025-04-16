@@ -22,7 +22,7 @@ async def get_ai_responses(*, messages, model):
                 model= model.value,
                 messages=messages
             )
-        elif model == ModelType.SUMMARIZING:
+        elif model == ModelType.SUMMARIZING or model == ModelType.DRAFTING:
             response = await client.chat.completions.create(
                 model=model.value,
                 messages=messages,
